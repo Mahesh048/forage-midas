@@ -12,6 +12,12 @@ public class TransactionListener {
     private static final Logger logger =
             LoggerFactory.getLogger(TransactionListener.class);
 
+    private final DatabaseConduit databaseConduit;
+
+    public TransactionListener(DatabaseConduit databaseConduit) {
+        this.databaseConduit = databaseConduit;
+    }
+
     @KafkaListener(
             topics = "${general.kafka-topic}",
             groupId = "midas-core-group"
@@ -20,6 +26,7 @@ public class TransactionListener {
     public void receiveTransaction(Transaction transaction) {
 
         logger.info("Received transaction: {}", transaction);
+        databaseConduit.process(transaction);
     }
 
 }
